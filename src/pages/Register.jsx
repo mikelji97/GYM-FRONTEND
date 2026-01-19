@@ -59,7 +59,7 @@ const Register = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="off">
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-semibold mb-2">
               Nombre
@@ -70,6 +70,7 @@ const Register = () => {
               onChange={(e) => setName(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
               placeholder="Tu nombre"
+              autoComplete="new-password"
               required
             />
           </div>
@@ -84,6 +85,7 @@ const Register = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
               placeholder="tu@email.com"
+              autoComplete="new-password"
               required
             />
           </div>
@@ -98,6 +100,7 @@ const Register = () => {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
               placeholder="••••••••"
+              autoComplete="new-password"
               required
             />
           </div>
@@ -112,6 +115,7 @@ const Register = () => {
               onChange={(e) => setPasswordConfirmation(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
               placeholder="••••••••"
+              autoComplete="new-password"
               required
             />
           </div>
