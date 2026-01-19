@@ -36,9 +36,9 @@ const Bookings = () => {
 
   const getStatusBadge = (status) => {
     const styles = {
-      confirmed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
-      attended: 'bg-blue-100 text-blue-800',
+      confirmed: 'bg-green-500/20 text-green-400',
+      cancelled: 'bg-red-500/20 text-red-400',
+      attended: 'bg-blue-500/20 text-blue-400',
     };
     const labels = {
       confirmed: 'Confirmada',
@@ -46,7 +46,7 @@ const Bookings = () => {
       attended: 'Asistió',
     };
     return (
-      <span className={`px-2 py-1 rounded text-sm ${styles[status] || 'bg-gray-100 text-gray-800'}`}>
+      <span className={`px-3 py-1 rounded-full text-sm font-medium ${styles[status] || 'bg-gray-500/20 text-gray-400'}`}>
         {labels[status] || status}
       </span>
     );
@@ -54,58 +54,63 @@ const Bookings = () => {
 
   return (
     <Layout>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">
+      <div className="mb-8">
+        <h1 className="text-4xl font-extrabold text-white">
           {isAdmin() ? 'Todas las Reservas' : 'Mis Reservas'}
         </h1>
+        <p className="text-gray-400 mt-2">
+          {isAdmin() ? 'Gestiona todas las reservas del gimnasio' : 'Consulta y gestiona tus reservas'}
+        </p>
       </div>
 
       {loading ? (
-        <p className="text-gray-600">Cargando reservas...</p>
+        <p className="text-gray-400">Cargando reservas...</p>
       ) : bookings.length === 0 ? (
-        <p className="text-gray-600">No hay reservas</p>
+        <div className="text-center py-12">
+          <p className="text-gray-400 text-lg">No hay reservas</p>
+        </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 overflow-hidden">
+          <table className="min-w-full">
+            <thead className="bg-white/5">
               <tr>
                 {isAdmin() && (
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                     Usuario
                   </th>
                 )}
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Clase
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Fecha
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Hora
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Estado
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/10">
               {bookings.map((booking) => (
-                <tr key={booking.id}>
+                <tr key={booking.id} className="hover:bg-white/5 transition">
                   {isAdmin() && (
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap text-white">
                       {booking.user?.name || 'Usuario'}
                     </td>
                   )}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-white font-medium">
                     {booking.session?.gym_class?.name || 'Clase'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-300">
                     {booking.session?.date}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-300">
                     {booking.session?.start_time} - {booking.session?.end_time}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -115,7 +120,7 @@ const Bookings = () => {
                     {booking.status === 'confirmed' && (
                       <button
                         onClick={() => handleCancel(booking.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="bg-red-600/20 text-red-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600/30 transition"
                       >
                         Cancelar
                       </button>

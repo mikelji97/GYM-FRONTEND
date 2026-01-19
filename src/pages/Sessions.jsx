@@ -115,45 +115,61 @@ const Sessions = () => {
 
   return (
     <Layout>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Sesiones</h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-4xl font-extrabold text-white">Sesiones</h1>
+          <p className="text-gray-400 mt-2">Reserva tu próxima clase</p>
+        </div>
         <div className="flex items-center space-x-4">
-          <label className="flex items-center">
+          <label className="flex items-center text-gray-300 cursor-pointer">
             <input
               type="checkbox"
               checked={showOnlyAvailable}
               onChange={(e) => setShowOnlyAvailable(e.target.checked)}
-              className="mr-2"
+              className="mr-2 w-4 h-4 accent-red-600"
             />
             Solo con plazas
           </label>
           {isAdmin() && (
             <button
               onClick={() => openModal()}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="bg-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-700 transition transform hover:scale-105"
             >
-              Nueva Sesión
+              + Nueva Sesión
             </button>
           )}
         </div>
       </div>
 
       {loading ? (
-        <p className="text-gray-600">Cargando sesiones...</p>
+        <p className="text-gray-400">Cargando sesiones...</p>
       ) : sessions.length === 0 ? (
-        <p className="text-gray-600">No hay sesiones disponibles</p>
+        <div className="text-center py-12">
+          <p className="text-gray-400 text-lg">No hay sesiones disponibles</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sessions.map((session) => (
-            <div key={session.id} className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-xl font-semibold text-gray-800">
+            <div key={session.id} className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20 hover:bg-white/15 transition">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-orange-500 text-2xl">📅</span>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  getAvailableSpots(session) > 0
+                    ? 'bg-green-500/20 text-green-400'
+                    : 'bg-red-500/20 text-red-400'
+                }`}>
+                  {getAvailableSpots(session)} / {session.capacity} plazas
+                </span>
+              </div>
+              <h3 className="text-xl font-bold text-white">
                 {session.gym_class?.name || 'Clase'}
               </h3>
-              <div className="mt-2 text-gray-600">
-                <p>Fecha: {session.date}</p>
-                <p>Hora: {session.start_time} - {session.end_time}</p>
-                <p className={getAvailableSpots(session) > 0 ? 'text-green-600' : 'text-red-600'}>
-                  Plazas: {getAvailableSpots(session)} / {session.capacity}
+              <div className="mt-3 text-gray-400 space-y-1">
+                <p className="flex items-center">
+                  <span className="mr-2">📆</span> {session.date}
+                </p>
+                <p className="flex items-center">
+                  <span className="mr-2">🕐</span> {session.start_time} - {session.end_time}
                 </p>
               </div>
 
@@ -161,7 +177,7 @@ const Sessions = () => {
                 {!isAdmin() && getAvailableSpots(session) > 0 && (
                   <button
                     onClick={() => handleBook(session.id)}
-                    className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600"
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition flex-1"
                   >
                     Reservar
                   </button>
@@ -170,13 +186,13 @@ const Sessions = () => {
                   <>
                     <button
                       onClick={() => openModal(session)}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded text-sm hover:bg-yellow-600"
+                      className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition"
                     >
                       Editar
                     </button>
                     <button
                       onClick={() => handleDelete(session.id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition"
                     >
                       Eliminar
                     </button>
@@ -189,90 +205,91 @@ const Sessions = () => {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-900 border border-white/20 p-8 rounded-2xl w-full max-w-md shadow-2xl">
+            <h2 className="text-2xl font-bold text-white mb-6">
               {editingSession ? 'Editar Sesión' : 'Nueva Sesión'}
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
+                <label className="block text-gray-300 text-sm font-semibold mb-2">
                   Clase
                 </label>
                 <select
                   value={formData.gym_class_id}
                   onChange={(e) => setFormData({ ...formData, gym_class_id: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                   required
                 >
-                  <option value="">Seleccionar clase</option>
+                  <option value="" className="bg-gray-900">Seleccionar clase</option>
                   {classes.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+                    <option key={c.id} value={c.id} className="bg-gray-900">{c.name}</option>
                   ))}
                 </select>
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
+                <label className="block text-gray-300 text-sm font-semibold mb-2">
                   Fecha
                 </label>
                 <input
                   type="date"
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                   required
                 />
               </div>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                  <label className="block text-gray-300 text-sm font-semibold mb-2">
                     Hora inicio
                   </label>
                   <input
                     type="time"
                     value={formData.start_time}
                     onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                  <label className="block text-gray-300 text-sm font-semibold mb-2">
                     Hora fin
                   </label>
                   <input
                     type="time"
                     value={formData.end_time}
                     onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     required
                   />
                 </div>
               </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
+              <div className="mb-6">
+                <label className="block text-gray-300 text-sm font-semibold mb-2">
                   Capacidad
                 </label>
                 <input
                   type="number"
                   value={formData.capacity}
                   onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                  placeholder="Número de plazas"
                   min="1"
                   required
                 />
               </div>
-              <div className="flex justify-end space-x-2">
+              <div className="flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100"
+                  className="px-5 py-2.5 border border-white/20 text-gray-300 rounded-lg hover:bg-white/10 transition"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
                 >
                   Guardar
                 </button>

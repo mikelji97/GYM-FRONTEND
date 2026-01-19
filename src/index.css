@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+:root {
+  --gym-primary: #dc2626;
+  --gym-secondary: #1f2937;
+  --gym-accent: #f97316;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.gym-gradient {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+.gym-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}

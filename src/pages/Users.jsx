@@ -54,56 +54,59 @@ const Users = () => {
 
   return (
     <Layout>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Gestión de Usuarios</h1>
+      <div className="mb-8">
+        <h1 className="text-4xl font-extrabold text-white">Gestión de Usuarios</h1>
+        <p className="text-gray-400 mt-2">Administra los usuarios del gimnasio</p>
       </div>
 
       {loading ? (
-        <p className="text-gray-600">Cargando usuarios...</p>
+        <p className="text-gray-400">Cargando usuarios...</p>
       ) : users.length === 0 ? (
-        <p className="text-gray-600">No hay usuarios</p>
+        <div className="text-center py-12">
+          <p className="text-gray-400 text-lg">No hay usuarios</p>
+        </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 overflow-hidden">
+          <table className="min-w-full">
+            <thead className="bg-white/5">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Nombre
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Rol
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/10">
               {users.map((user) => (
-                <tr key={user.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
+                <tr key={user.id} className="hover:bg-white/5 transition">
+                  <td className="px-6 py-4 whitespace-nowrap text-white font-medium">{user.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-300">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 rounded text-sm ${
-                      user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      user.role === 'admin' ? 'bg-purple-500/20 text-purple-400' : 'bg-gray-500/20 text-gray-400'
                     }`}>
-                      {user.role}
+                      {user.role === 'admin' ? 'Administrador' : 'Usuario'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap space-x-2">
                     <button
                       onClick={() => viewStats(user)}
-                      className="text-blue-600 hover:text-blue-800"
+                      className="bg-blue-600/20 text-blue-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600/30 transition"
                     >
                       Ver Stats
                     </button>
                     {user.role !== 'admin' && (
                       <button
                         onClick={() => handleDelete(user.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="bg-red-600/20 text-red-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600/30 transition"
                       >
                         Eliminar
                       </button>
@@ -117,32 +120,32 @@ const Users = () => {
       )}
 
       {selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">
-              Estadísticas de {selectedUser.name}
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-900 border border-white/20 p-8 rounded-2xl w-full max-w-md shadow-2xl">
+            <h2 className="text-2xl font-bold text-white mb-6">
+              Estadísticas de <span className="text-red-500">{selectedUser.name}</span>
             </h2>
             {userStats ? (
               <div className="space-y-4">
-                <div className="flex justify-between p-3 bg-green-50 rounded">
-                  <span className="text-green-700">Reservas Confirmadas</span>
-                  <span className="font-bold text-green-700">{userStats.confirmed || 0}</span>
+                <div className="flex justify-between items-center p-4 bg-green-500/10 border border-green-500/20 rounded-xl">
+                  <span className="text-green-400">Reservas Confirmadas</span>
+                  <span className="font-bold text-green-400 text-2xl">{userStats.confirmed || 0}</span>
                 </div>
-                <div className="flex justify-between p-3 bg-red-50 rounded">
-                  <span className="text-red-700">Reservas Canceladas</span>
-                  <span className="font-bold text-red-700">{userStats.cancelled || 0}</span>
+                <div className="flex justify-between items-center p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+                  <span className="text-red-400">Reservas Canceladas</span>
+                  <span className="font-bold text-red-400 text-2xl">{userStats.cancelled || 0}</span>
                 </div>
-                <div className="flex justify-between p-3 bg-blue-50 rounded">
-                  <span className="text-blue-700">Asistencias</span>
-                  <span className="font-bold text-blue-700">{userStats.attended || 0}</span>
+                <div className="flex justify-between items-center p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                  <span className="text-blue-400">Asistencias</span>
+                  <span className="font-bold text-blue-400 text-2xl">{userStats.attended || 0}</span>
                 </div>
               </div>
             ) : (
-              <p className="text-gray-600">Cargando estadísticas...</p>
+              <p className="text-gray-400">Cargando estadísticas...</p>
             )}
             <button
               onClick={closeStats}
-              className="mt-4 w-full px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+              className="mt-6 w-full px-4 py-3 bg-white/10 border border-white/20 text-gray-300 rounded-xl font-medium hover:bg-white/20 transition"
             >
               Cerrar
             </button>

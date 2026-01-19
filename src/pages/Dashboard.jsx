@@ -28,51 +28,68 @@ const Dashboard = () => {
   return (
     <Layout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Bienvenido, {user?.name}
+        <h1 className="text-4xl font-extrabold text-white">
+          Bienvenido, <span className="text-red-500">{user?.name}</span>
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-400 mt-2 text-lg">
           Panel de {isAdmin() ? 'Administrador' : 'Usuario'}
         </p>
       </div>
 
       {loading ? (
-        <p className="text-gray-600">Cargando estadísticas...</p>
+        <p className="text-gray-400">Cargando estadísticas...</p>
       ) : stats ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700">Reservas Confirmadas</h3>
-            <p className="text-3xl font-bold text-green-600 mt-2">
+          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-300">Reservas Confirmadas</h3>
+              <span className="text-green-400 text-2xl">✓</span>
+            </div>
+            <p className="text-5xl font-extrabold text-green-400 mt-4">
               {stats.confirmed || 0}
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700">Reservas Canceladas</h3>
-            <p className="text-3xl font-bold text-red-600 mt-2">
+          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-300">Reservas Canceladas</h3>
+              <span className="text-red-400 text-2xl">✕</span>
+            </div>
+            <p className="text-5xl font-extrabold text-red-400 mt-4">
               {stats.cancelled || 0}
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700">Asistencias</h3>
-            <p className="text-3xl font-bold text-blue-600 mt-2">
+          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-300">Asistencias</h3>
+              <span className="text-blue-400 text-2xl">★</span>
+            </div>
+            <p className="text-5xl font-extrabold text-blue-400 mt-4">
               {stats.attended || 0}
             </p>
           </div>
         </div>
       ) : (
-        <p className="text-gray-600">No se pudieron cargar las estadísticas</p>
+        <p className="text-gray-400">No se pudieron cargar las estadísticas</p>
       )}
 
       {isAdmin() && (
-        <div className="mt-8 bg-yellow-50 border border-yellow-200 p-6 rounded-lg">
-          <h2 className="text-xl font-bold text-yellow-800 mb-4">
-            Panel de Administración
+        <div className="mt-8 bg-gradient-to-r from-red-600/20 to-orange-600/20 backdrop-blur-sm border border-red-500/30 p-6 rounded-2xl">
+          <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+            <span className="mr-2">⚡</span> Panel de Administración
           </h2>
-          <p className="text-yellow-700">
-            Como administrador puedes gestionar clases, sesiones y ver todas las reservas.
+          <p className="text-gray-300">
+            Como administrador puedes gestionar clases, sesiones y ver todas las reservas del gimnasio.
           </p>
+          <div className="mt-4 flex space-x-4">
+            <a href="/classes" className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
+              Gestionar Clases
+            </a>
+            <a href="/sessions" className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition">
+              Gestionar Sesiones
+            </a>
+          </div>
         </div>
       )}
     </Layout>
