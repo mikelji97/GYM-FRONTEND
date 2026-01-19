@@ -16,8 +16,11 @@ const Sessions = () => {
     date: '',
     start_time: '',
     end_time: '',
-    capacity: '',
+    room: '',
+    max_capacity: '',
   });
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchSessions();
@@ -47,6 +50,8 @@ const Sessions = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSaving(true);
     try {
       if (editingSession) {
         await api.put(`/sessions/${editingSession.id}`, formData);
@@ -55,8 +60,14 @@ const Sessions = () => {
       }
       fetchSessions();
       closeModal();
-    } catch (error) {
-      console.error('Error al guardar sesión:', error);
+    } catch (err) {
+      console.error('Error al guardar sesión:', err);
+      const errorMsg = err.response?.data?.message ||
+                       JSON.stringify(err.response?.data?.errors) ||
+                       'Error al guardar la sesión';
+      setError(errorMsg);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -88,7 +99,8 @@ const Sessions = () => {
         date: session.date,
         start_time: session.start_time,
         end_time: session.end_time,
-        capacity: session.capacity,
+        room: session.room || '',
+        max_capacity: session.max_capacity,
       });
     } else {
       setEditingSession(null);
@@ -97,9 +109,11 @@ const Sessions = () => {
         date: '',
         start_time: '',
         end_time: '',
-        capacity: '',
+        room: '',
+        max_capacity: '',
       });
     }
+    setError('');
     setShowModal(true);
   };
 
@@ -109,8 +123,8 @@ const Sessions = () => {
   };
 
   const getAvailableSpots = (session) => {
-    const booked = session.bookings_count || 0;
-    return session.capacity - booked;
+    const booked = session.current_bookings || 0;
+    return session.max_capacity - booked;
   };
 
   return (
@@ -171,10 +185,13 @@ const Sessions = () => {
                 <p className="flex items-center">
                   <span className="mr-2">🕐</span> {session.start_time} - {session.end_time}
                 </p>
+                <p className="flex items-center">
+                  <span className="mr-2">🏠</span> {session.room}
+                </p>
               </div>
 
               <div className="mt-4 flex space-x-2">
-                {!isAdmin() && getAvailableSpots(session) > 0 && (
+                {getAvailableSpots(session) > 0 && (
                   <button
                     onClick={() => handleBook(session.id)}
                     className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition flex-1"
@@ -210,6 +227,13 @@ const Sessions = () => {
             <h2 className="text-2xl font-bold text-white mb-6">
               {editingSession ? 'Editar Sesión' : 'Nueva Sesión'}
             </h2>
+
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg mb-4">
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-gray-300 text-sm font-semibold mb-2">
@@ -265,19 +289,34 @@ const Sessions = () => {
                   />
                 </div>
               </div>
-              <div className="mb-6">
-                <label className="block text-gray-300 text-sm font-semibold mb-2">
-                  Capacidad
-                </label>
-                <input
-                  type="number"
-                  value={formData.capacity}
-                  onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                  placeholder="Número de plazas"
-                  min="1"
-                  required
-                />
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-gray-300 text-sm font-semibold mb-2">
+                    Sala
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.room}
+                    onChange={(e) => setFormData({ ...formData, room: e.target.value })}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    placeholder="Ej: Sala 1"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-sm font-semibold mb-2">
+                    Capacidad
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.max_capacity}
+                    onChange={(e) => setFormData({ ...formData, max_capacity: parseInt(e.target.value) || '' })}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    placeholder="Plazas"
+                    min="1"
+                    required
+                  />
+                </div>
               </div>
               <div className="flex justify-end space-x-3">
                 <button
@@ -289,9 +328,10 @@ const Sessions = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+                  disabled={saving}
+                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed transition"
                 >
-                  Guardar
+                  {saving ? 'Guardando...' : 'Guardar'}
                 </button>
               </div>
             </form>
