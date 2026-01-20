@@ -12,7 +12,7 @@ const Dashboard = () => {
     const fetchStats = async () => {
       try {
         const response = await api.get(`/users/${user.id}/stats`);
-        setStats(response.data);
+        setStats(response.data.data || response.data);
       } catch (error) {
         console.error('Error al cargar estadísticas:', error);
       } finally {
