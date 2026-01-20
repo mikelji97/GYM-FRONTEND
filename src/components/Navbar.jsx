@@ -41,7 +41,7 @@ const Navbar = () => {
               Sesiones
             </Link>
             <Link to="/bookings" className={navLinkClass('/bookings')}>
-              Mis Reservas
+              Reservas
             </Link>
 
             {isAdmin() && (

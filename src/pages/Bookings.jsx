@@ -7,14 +7,16 @@ const Bookings = () => {
   const { isAdmin } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('mine');
 
   useEffect(() => {
     fetchBookings();
-  }, []);
+  }, [activeTab]);
 
   const fetchBookings = async () => {
+    setLoading(true);
     try {
-      const endpoint = isAdmin() ? '/bookings' : '/bookings/my-bookings';
+      const endpoint = (isAdmin() && activeTab === 'all') ? '/bookings' : '/bookings/my-bookings';
       const response = await api.get(endpoint);
       setBookings(response.data.data || response.data);
     } catch (error) {
@@ -55,13 +57,36 @@ const Bookings = () => {
   return (
     <Layout>
       <div className="mb-8">
-        <h1 className="text-4xl font-extrabold text-white">
-          {isAdmin() ? 'Todas las Reservas' : 'Mis Reservas'}
-        </h1>
+        <h1 className="text-4xl font-extrabold text-white">Reservas</h1>
         <p className="text-gray-400 mt-2">
-          {isAdmin() ? 'Gestiona todas las reservas del gimnasio' : 'Consulta y gestiona tus reservas'}
+          {isAdmin() ? 'Gestiona las reservas del gimnasio' : 'Consulta y gestiona tus reservas'}
         </p>
       </div>
+
+      {isAdmin() && (
+        <div className="flex space-x-2 mb-6">
+          <button
+            onClick={() => setActiveTab('mine')}
+            className={`px-4 py-2 rounded-lg font-medium transition ${
+              activeTab === 'mine'
+                ? 'bg-red-600 text-white'
+                : 'bg-white/10 text-gray-300 hover:bg-white/20'
+            }`}
+          >
+            Mis Reservas
+          </button>
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`px-4 py-2 rounded-lg font-medium transition ${
+              activeTab === 'all'
+                ? 'bg-red-600 text-white'
+                : 'bg-white/10 text-gray-300 hover:bg-white/20'
+            }`}
+          >
+            Todas las Reservas
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <p className="text-gray-400">Cargando reservas...</p>
@@ -74,7 +99,7 @@ const Bookings = () => {
           <table className="min-w-full">
             <thead className="bg-white/5">
               <tr>
-                {isAdmin() && (
+                {isAdmin() && activeTab === 'all' && (
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                     Usuario
                   </th>
@@ -99,7 +124,7 @@ const Bookings = () => {
             <tbody className="divide-y divide-white/10">
               {bookings.map((booking) => (
                 <tr key={booking.id} className="hover:bg-white/5 transition">
-                  {isAdmin() && (
+                  {isAdmin() && activeTab === 'all' && (
                     <td className="px-6 py-4 whitespace-nowrap text-white">
                       {booking.user?.name || 'Usuario'}
                     </td>
