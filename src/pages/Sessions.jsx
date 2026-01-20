@@ -172,7 +172,7 @@ const Sessions = () => {
                     ? 'bg-green-500/20 text-green-400'
                     : 'bg-red-500/20 text-red-400'
                 }`}>
-                  {getAvailableSpots(session)} / {session.capacity} plazas
+                  {getAvailableSpots(session)} / {session.max_capacity} plazas
                 </span>
               </div>
               <h3 className="text-xl font-bold text-white">
@@ -310,7 +310,7 @@ const Sessions = () => {
                   <input
                     type="number"
                     value={formData.max_capacity}
-                    onChange={(e) => setFormData({ ...formData, max_capacity: parseInt(e.target.value) || '' })}
+                    onChange={(e) => setFormData({ ...formData, max_capacity: parseInt(e.target.value) || 0 })}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     placeholder="Plazas"
                     min="1"
